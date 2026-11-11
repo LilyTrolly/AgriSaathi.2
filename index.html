@@ -916,6 +916,10 @@ function stopSpeaking() {
 }
 
   
+function stopSpeaking() {
+  window.speechSynthesis.cancel();
+}
+  
 // AGRIEQUIP WEATHER SYSTEM
 
 async function getWeather() {
