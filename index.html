@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriEquip | Smart Farming Access</title>
+<style>
+:root {
+  --forest:#123d2b; --green:#26734d; --leaf:#65a86e;
+  --lime:#d9efbd; --cream:#f5f8ef; --white:#fff;
+  --ink:#20372b; --muted:#6b7e70;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; font-family:Arial,sans-serif;
+  background:var(--cream); color:var(--ink);
+}
+header {
+  background:var(--forest); color:white; padding:18px 6%;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:12px;
+}
+.logo { font-size:25px; font-weight:800; }
+.logo span { color:#a9d78c; }
+nav { display:flex; gap:8px; flex-wrap:wrap; }
+nav button {
+  border:0; background:transparent; color:white;
+  padding:10px; border-radius:8px; cursor:pointer;
+}
+nav button:hover, nav button.active { background:#ffffff22; }
+select,input,textarea {
+  width:100%; padding:12px; border:1px solid #d2ddcf;
+  border-radius:9px; font:inherit; background:white;
+}
+button,.btn {
+  cursor:pointer; border:0; border-radius:9px;
+  padding:12px 16px; background:var(--green);
+  color:white; font-weight:700;
+}
+button:hover,.btn:hover { background:var(--forest); }
+main { max-width:1150px; margin:auto; padding:24px 5%; }
+.page { display:none; }
+.page.active { display:block; }
+.hero {
+  min-height:330px; border-radius:20px; overflow:hidden;
+  padding:45px; color:white; display:flex; align-items:center;
+  background:linear-gradient(90deg,#123d2beF,#123d2b55),
+  url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400")
+  center/cover;
+}
+.hero h1 { font-size:clamp(32px,5vw,55px); max-width:650px; }
+.hero p { font-size:18px; max-width:560px; line-height:1.6; }
+.section-title { color:var(--forest); margin-top:30px; }
+.grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:17px; margin:18px 0;
+}
+.card {
+  background:white; border-radius:15px; padding:20px;
+  box-shadow:0 5px 20px #173c1b0d;
+}
+.card img {
+  width:100%; height:155px; object-fit:cover; border-radius:10px;
+}
+.card h3 { color:var(--forest); }
+.small { color:var(--muted); font-size:14px; line-height:1.5; }
+.form-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+}
+label { display:block; font-weight:700; margin:12px 0 6px; }
+.result {
+  background:#e8f4df; padding:16px; border-radius:10px;
+  margin-top:14px; line-height:1.6;
+}
+.tag {
+  display:inline-block; padding:5px 9px; border-radius:20px;
+  background:var(--lime); color:var(--forest); font-size:12px;
+}
+footer {
+  background:var(--forest); color:white; padding:28px 6%;
+  text-align:center; margin-top:40px;
+}
+video { width:100%; border-radius:12px; background:#173c2b; }
+@media(max-width:600px) {
+  header { align-items:flex-start; }
+  .hero { padding:25px; min-height:300px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">🌱 Agri<span>Equip</span></div>
+  <nav>
+    <button class="active" onclick="showPage('home',this)">Home</button>
+    <button onclick="showPage('equipment',this)">Equipment</button>
+    <button onclick="showPage('soil',this)">Soil Lab</button>
+    <button onclick="showPage('explorer',this)">India Soil Guide</button>
+    <button onclick="showPage('account',this)">Farmer Account</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- HOME PAGE -->
+<section id="home" class="page active">
+  <div class="hero">
+    <div>
+      <span class="tag">SMARTER FARMING • SHARED EQUIPMENT</span>
+      <h1>Access the equipment. Grow the future.</h1>
+      <p>Find agricultural machinery when you need it, connect with equipment owners and learn how to care for your soil.</p>
+      <button onclick="showPage('equipment')">Explore equipment</button>
+    </div>
+  </div>
+
+  <h2 class="section-title">What can you do with AgriEquip?</h2>
+  <div class="grid">
+    <div class="card"><h3>🚜 Rent equipment</h3><p class="small">Find tractors, rotavators, sprayers and other farm machinery.</p></div>
+    <div class="card"><h3>🌾 Understand your soil</h3><p class="small">Explore soil types and general soil-improvement guidance.</p></div>
+    <div class="card"><h3>📍 Find local services</h3><p class="small">Enter your location or choose to share it with permission.</p></div>
+    <div class="card"><h3>🤝 List your machinery</h3><p class="small">Equipment owners can list machines for other farmers to request.</p></div>
+  </div>
+
+  <h2 class="section-title">Farming in action</h2>
+  <div class="grid">
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1499529112087-3cb3b73f9c1e?w=800" alt="Green agricultural field">
+      <h3>Healthy fields</h3><p class="small">Good soil management supports productive farms.</p>
+    </div>
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800" alt="Agricultural landscape">
+      <h3>Modern agriculture</h3><p class="small">Shared machinery can help reduce the need to purchase expensive equipment.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Watch farming equipment in action</h3>
+    <p class="small">Open farming machinery demonstrations and tutorials on YouTube.</p>
+    <a class="btn" href="https://www.youtube.com/results?search_query=tractor+agricultural+equipment+demonstration" target="_blank" rel="noopener">Watch farming videos ↗</a>
+    <p class="small">To show a specific video inside this page, replace the video placeholder in the code with that video's YouTube embed address.</p>
+  </div>
+</section>
+
+<!-- EQUIPMENT PAGE -->
+<section id="equipment" class="page">
+  <h1 class="section-title">🚜 Equipment marketplace</h1>
+  <p class="small">Search sample listings or add your own equipment. Availability shown here is demonstration data.</p>
+  <input id="searchEquipment" placeholder="Search tractor, sprayer, location..." oninput="renderEquipment()">
+  <div id="equipmentList" class="grid"></div>
+
+  <div class="card">
+    <h2>List your equipment</h2>
+    <div class="form-grid">
+      <div><label>Equipment name</label><input id="machineName" placeholder="Example: Tractor"></div>
+      <div><label>Location</label><input id="machineLocation" placeholder="Village / district"></div>
+      <div><label>Price per day (₹)</label><input id="machinePrice" type="number" min="0" placeholder="Example: 1500"></div>
+      <div><label>Availability</label>
+        <select id="machineAvailability"><option>Available</option><option>Unavailable</option></select>
+      </div>
+    </div>
+    <label>Owner contact (demo only)</label><input id="machineContact" placeholder="Phone number or contact details">
+    <br><br><button onclick="addEquipment()">Add equipment listing</button>
+    <div id="listingMessage" class="result" hidden></div>
+  </div>
+</section>
+
+<!-- SOIL PAGE -->
+<section id="soil" class="page">
+  <h1 class="section-title">🌱 Soil Lab</h1>
+  <p class="small">Enter what you know about your field. Suggestions are general educational guidance, not a substitute for a laboratory soil test.</p>
+  <div class="card">
+    <div class="form-grid">
+      <div><label>Soil type</label>
+        <select id="soilType">
+          <option>Alluvial</option><option>Black cotton soil</option>
+          <option>Red soil</option><option>Laterite soil</option>
+          <option>Desert / arid soil</option><option>Mountain / forest soil</option>
+          <option>Saline or alkaline soil</option><option>Clay soil</option>
+          <option>Sandy soil</option><option>Loamy soil</option>
+        </select>
+      </div>
+      <div><label>Crop you grow</label><input id="crop" placeholder="Example: Rice, wheat, cotton"></div>
+      <div><label>Soil pH (if known)</label><input id="ph" type="number" min="0" max="14" step="0.1" placeholder="Example: 6.8"></div>
+    </div>
+    <label>Fertilisers currently being used</label>
+    <textarea id="fertilizers" rows="3" placeholder="Write the names and quantities if known..."></textarea>
+    <label>What problem have you noticed?</label>
+    <select id="soilProblem">
+      <option value="none">No known problem</option>
+      <option value="low">Low fertility / poor growth</option>
+      <option value="water">Water drains too quickly</option>
+      <option value="waterlog">Waterlogging</option>
+      <option value="salinity">Possible salt build-up</option>
+      <option value="erosion">Soil erosion</option>
+    </select>
+    <br><br><button onclick="getSoilAdvice()">Get soil suggestions</button>
+    <div id="soilAdvice" class="result" hidden></div>
+  </div>
+
+  <h2 class="section-title">Biodegradable soil-improvement materials</h2>
+  <div class="grid">
+    <div class="card"><h3>Compost</h3><p class="small">Adds organic matter and can improve soil structure.</p></div>
+    <div class="card"><h3>Farmyard manure</h3><p class="small">Well-decomposed manure can add nutrients and organic matter.</p></div>
+    <div class="card"><h3>Green manure</h3><p class="small">Suitable crops such as dhaincha can be grown and incorporated into soil.</p></div>
+    <div class="card"><h3>Crop-residue mulch</h3><p class="small">Clean crop residues can help protect soil and reduce moisture loss.</p></div>
+    <div class="card"><h3>Vermicompost</h3><p class="small">A source of organic matter and plant nutrients.</p></div>
+    <div class="card"><h3>Neem cake</h3><p class="small">An organic amendment sometimes used in crop and soil management.</p></div>
+  </div>
+  <p class="small">Use materials that are mature, clean and suitable for your crop. Test soil first and follow local agricultural advice before changing fertiliser rates or applying amendments.</p>
+</section>
+
+<!-- INDIA SOIL GUIDE PAGE -->
+<section id="explorer" class="page">
+  <h1 class="section-title">🗺️ India Soil & Crop Health Guide</h1>
+  <p class="small">An introductory guide to major Indian soil groups and common soil-related and plant-health problems.</p>
+  <div class="grid">
+    <div class="card"><h3>Alluvial soil</h3><p class="small">Common in river plains, including parts of Punjab, Uttar Pradesh, Bihar and West Bengal. Often supports rice, wheat and other crops, depending on water and nutrients.</p></div>
+    <div class="card"><h3>Black soil</h3><p class="small">Found across parts of Maharashtra, Madhya Pradesh, Gujarat and the Deccan region. Often associated with cotton; can become sticky when wet.</p></div>
+    <div class="card"><h3>Red soil</h3><p class="small">Occurs in parts of Karnataka, Tamil Nadu, Andhra Pradesh and Odisha. Organic matter and nutrient levels vary by location.</p></div>
+    <div class="card"><h3>Laterite soil</h3><p class="small">Found in parts of the Western Ghats, Kerala, Karnataka and the eastern hills. Can be acidic and nutrient-poor in some areas.</p></div>
+    <div class="card"><h3>Arid soil</h3><p class="small">Common in Rajasthan and other dry regions. Low rainfall and salt accumulation can be challenges.</p></div>
+    <div class="card"><h3>Forest and mountain soil</h3><p class="small">Found in Himalayan and hill regions. Properties vary with altitude, slope and vegetation.</p></div>
+  </div>
+
+  <h2 class="section-title">Common soil and plant-health problems</h2>
+  <div class="grid">
+    <div class="card"><h3>Soil salinity</h3><p class="small">Excess soluble salts can make it harder for plants to absorb water. Soil and irrigation-water testing helps identify the issue.</p></div>
+    <div class="card"><h3>Soil erosion</h3><p class="small">Wind and water can remove fertile topsoil. Cover crops, mulch and contour-based practices may help.</p></div>
+    <div class="card"><h3>Root rot</h3><p class="small">Some fungi and fungus-like organisms cause root diseases, often encouraged by poor drainage.</p></div>
+    <div class="card"><h3>Wilt diseases</h3><p class="small">Some soil-borne pathogens can cause wilting in crops. Diagnosis is crop-specific.</p></div>
+    <div class="card"><h3>Nutrient deficiency</h3><p class="small">Low nitrogen, phosphorus, potassium or micronutrients can affect growth. Soil testing helps guide treatment.</p></div>
+    <div class="card"><h3>Plant pests and diseases</h3><p class="small">Insects, viruses, bacteria and fungi affect different crops. Correct identification matters before treatment.</p></div>
+  </div>
+  <div class="result">
+    <strong>Important:</strong> Soil itself does not have a single list of "diseases". Soil-borne pathogens can cause plant diseases. Do not diagnose a crop problem from soil type alone.
+  </div>
+  <h2 class="section-title">Useful agricultural resources</h2>
+  <ul>
+    <li><a href="https://soilhealth.dac.gov.in/" target="_blank" rel="noopener">India Soil Health Card portal</a></li>
+    <li><a href="https://icar.org.in/" target="_blank" rel="noopener">Indian Council of Agricultural Research (ICAR)</a></li>
+    <li><a href="https://www.fao.org/" target="_blank" rel="noopener">Food and Agriculture Organization (FAO)</a></li>
+  </ul>
+</section>
+
+<!-- ACCOUNT AND TRANSACTIONS PAGE -->
+<section id="account" class="page">
+  <h1 class="section-title">👨‍🌾 Farmer account</h1>
+  <div class="card">
+    <h2>Farmer details</h2>
+    <label>Name</label><input id="farmerName" placeholder="Enter your name">
+    <label>Preferred language</label>
+    <select id="language">
+      <option>English</option><option>हिन्दी - Hindi</option>
+      <option>ಕನ್ನಡ - Kannada</option><option>தமிழ் - Tamil</option>
+      <option>తెలుగు - Telugu</option><option>മലയാളം - Malayalam</option>
+      <option>मराठी - Marathi</option><option>বাংলা - Bengali</option>
+      <option>ગુજરાતી - Gujarati</option><option>ਪੰਜਾਬੀ - Punjabi</option>
+      <option>اردو - Urdu</option><option>ଓଡ଼ିଆ - Odia</option>
+      <option>অসমীয়া - Assamese</option><option>संस्कृतम् - Sanskrit</option>
+      <option>Nepali</option><option>Chinese</option><option>Japanese</option>
+      <option>Korean</option><option>Arabic</option><option>French</option>
+      <option>Spanish</option><option>Portuguese</option><option>German</option>
+      <option>Russian</option><option>Swahili</option><option>Indonesian</option>
+      <option>Turkish</option><option>Italian</option><option>Dutch</option>
+      <option>Thai</option><option>Vietnamese</option><option>Persian</option>
+      <option>Hebrew</option><option>Ukrainian</option><option>Polish</option>
+      <option>Greek</option><option>Other language</option>
+    </select>
+    <label>Village / district / state</label><input id="farmerLocation" placeholder="Enter your location">
+    <label>GPS location (optional)</label>
+    <button onclick="getLocation()">Share my location</button>
+    <p id="locationResult" class="small">Your location is not shared unless you choose to allow it.</p>
+    <br><button onclick="saveFarmer()">Save details on this device</button>
+    <div id="accountMessage" class="result" hidden></div>
+  </div>
+
+  <div class="card">
+    <h2>💳 Transaction record (demo)</h2>
+    <p class="small">This records a sample payment entry only. It does not collect money or connect to a bank.</p>
+    <label>Booking / equipment description</label><input id="paymentDescription" placeholder="Example: Tractor booking">
+    <label>Amount (₹)</label><input id="paymentAmount" type="number" min="0" placeholder="Example: 1500">
+    <br><br><button onclick="recordPayment()">Create demo transaction record</button>
+    <div id="paymentResult" class="result" hidden></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <h2>🌱 AgriEquip</h2>
+  <p>Sharing equipment. Supporting farmers. Caring for soil.</p>
+  <p class="small" style="color:#d5e8d4">Student project prototype • Demo data • Not a live rental or payment service</p>
+</footer>
+
+<script>
+// Demo equipment. These records are examples, not verified offers.
+let equipment = [
+ {name:"Tractor",location:"Mysuru, Karnataka",price:1800,availability:"Available"},
+ {name:"Rotavator",location:"Mandya, Karnataka",price:900,availability:"Available"},
+ {name:"Power Sprayer",location:"Bengaluru Rural",price:500,availability:"Available"},
+ {name:"Seed Drill",location:"Hubballi, Karnataka",price:1100,availability:"Unavailable"},
+ {name:"Mini Harvester",location:"Pune, Maharashtra",price:3500,availability:"Available"},
+ {name:"Farm Trailer",location:"Hassan, Karnataka",price:700,availability:"Available"}
+];
+
+function showPage(id,button) {
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  if(button) button.classList.add("active");
+  window.scrollTo(0,0);
+  if(id==="equipment") renderEquipment();
+}
+
+function renderEquipment() {
+  const term=document.getElementById("searchEquipment").value.toLowerCase();
+  const list=document.getElementById("equipmentList");
+  const matches=equipment.filter(e=>
+    (e.name+" "+e.location+" "+e.availability).toLowerCase().includes(term)
+  );
+  list.innerHTML=matches.map((e,i)=>`
+    <div class="card">
+      <span class="tag">${e.availability}</span>
+      <h3>🚜 ${e.name}</h3>
+      <p class="small">📍 ${e.location}</p>
+      <h3>₹${e.price} <span class="small">/ day (sample price)</span></h3>
+      <button ${e.availability!=="Available"?"disabled":""}
+        onclick="requestBooking(${equipment.indexOf(e)})">
+        ${e.availability==="Available"?"Request booking":"Not available"}
+      </button>
+    </div>`).join("") || "<p>No matching equipment found.</p>";
+}
+
+function requestBooking(index) {
+  const e=equipment[index];
+  alert("Demo booking request created for "+e.name+
+    ". Contact and confirmation are not connected in this prototype.");
+}
+
+function addEquipment() {
+  const name=document.getElementById("machineName").value.trim();
+  const location=document.getElementById("machineLocation").value.trim();
+  const price=Number(document.getElementById("machinePrice").value);
+  if(!name||!location||!price||price<0) {
+    alert("Please enter equipment name, location and a valid price.");
+    return;
+  }
+  equipment.push({
+    name,location,price,
+    availability:document.getElementById("machineAvailability").value
+  });
+  renderEquipment();
+  const msg=document.getElementById("listingMessage");
+  msg.hidden=false;
+  msg.textContent="Listing added to this browser session. It is not yet visible to other users.";
+  document.getElementById("machineName").value="";
+  document.getElementById("machineLocation").value="";
+  document.getElementById("machinePrice").value="";
+}
+
+function getSoilAdvice() {
+  const type=document.getElementById("soilType").value;
+  const ph=document.getElementById("ph").value;
+  const crop=document.getElementById("crop").value||"your crop";
+  const problem=document.getElementById("soilProblem").value;
+  let advice=[
+    "Get a soil test for pH, organic carbon and available nutrients.",
+    "Use mature compost or well-decomposed farmyard manure where suitable.",
+    "Consider crop rotation and locally recommended cover crops.",
+    "Choose fertiliser rates based on test results and crop requirements."
+  ];
+  if(type==="Black cotton soil") advice.push("Check drainage and avoid working very wet clay soil.");
+  if(type==="Sandy soil") advice.push("Organic matter and suitable mulching may help improve moisture retention.");
+  if(type==="Laterite soil") advice.push("Check soil acidity and nutrient status before choosing amendments.");
+  if(type==="Saline or alkaline soil") advice.push("Test salinity and irrigation water; get local expert guidance before attempting reclamation.");
+  if(problem==="water") advice.push("Mulching and adding suitable organic matter may help reduce rapid moisture loss.");
+  if(problem==="waterlog") advice.push("Investigate drainage and field levelling; avoid adding amendments without diagnosis.");
+  if(problem==="salinity") advice.push("Confirm the problem with an electrical-conductivity soil test.");
+  if(problem==="erosion") advice.push("Use ground cover, contour farming or other locally suitable erosion-control practices.");
+  if(problem==="low") advice.push("Check nutrient levels and crop symptoms before selecting fertilisers.");
+  const pHtext=ph?("Entered pH: "+ph+". A pH value alone is not enough to diagnose soil health. "):"No pH entered. ";
+  const out=document.getElementById("soilAdvice");
+  out.hidden=false;
+  out.innerHTML="<strong>General suggestions for "+crop+" in "+type+":</strong><br>"+
+    pHtext+"<ul>"+advice.map(a=>"<li>"+a+"</li>").join("")+"</ul>"+
+    "<strong>Fertilisers currently used:</strong> "+
+    (document.getElementById("fertilizers").value||"Not entered")+
+    "<p>For crop-specific recommendations, take a soil sample to a recognised soil-testing laboratory or local agricultural extension office.</p>";
+}
+
+function getLocation() {
+  const out=document.getElementById("locationResult");
+  if(!navigator.geolocation) {
+    out.textContent="This browser does not support location sharing.";
+    return;
+  }
+  out.textContent="Waiting for your permission...";
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      out.textContent="Location received: "+pos.coords.latitude.toFixed(4)+
+        ", "+pos.coords.longitude.toFixed(4)+
+        ". Save your details if you want to keep these coordinates on this device.";
+      document.getElementById("farmerLocation").value=
+        pos.coords.latitude.toFixed(4)+", "+pos.coords.longitude.toFixed(4);
+    },
+    ()=>out.textContent="Location was not shared. You can type your location instead."
+  );
+}
+
+function saveFarmer() {
+  const data={
+    name:document.getElementById("farmerName").value,
+    language:document.getElementById("language").value,
+    location:document.getElementById("farmerLocation").value
+  };
+  localStorage.setItem("agriequip_farmer_demo",JSON.stringify(data));
+  const msg=document.getElementById("accountMessage");
+  msg.hidden=false;
+  msg.textContent="Details saved in this browser on this device. This is not a secure online account.";
+}
+
+function recordPayment() {
+  const description=document.getElementById("paymentDescription").value.trim();
+  const amount=Number(document.getElementById("paymentAmount").value);
+  if(!description||!amount||amount<0) {
+    alert("Enter a description and a valid amount.");
+    return;
+  }
+  const ref="AG-"+Date.now().toString().slice(-8);
+  const out=document.getElementById("paymentResult");
+  out.hidden=false;
+  out.innerHTML="<strong>Demo transaction record created</strong><br>"+
+    "Reference: "+ref+"<br>Description: "+description+
+    "<br>Amount: ₹"+amount+
+    "<br><strong>Status: DEMO ONLY — no money was transferred.</strong>";
+}
+
+renderEquipment();
+</script>
+</body>
+</html>
