@@ -94,11 +94,83 @@ video { width:100%; border-radius:12px; background:#173c2b; }
 <header>
   <div class="logo">🌱 Agri<span>Equip</span></div>
   <nav>
+    <button onclick="showPage('weather',this)">🌤️ Weather</button>
+    <button onclick="showPage('voice',this)">🎙️ Voice Assistant</button>
     <button class="active" onclick="showPage('home',this)">Home</button>
     <button onclick="showPage('equipment',this)">Equipment</button>
     <button onclick="showPage('soil',this)">Soil Lab</button>
     <button onclick="showPage('explorer',this)">India Soil Guide</button>
     <button onclick="showPage('account',this)">Farmer Account</button>
+
+    
+<!-- AGRIEQUIP WEATHER PAGE -->
+<section id="weather" class="page">
+
+  <h1 class="section-title">🌤️ Local Weather</h1>
+
+  <p class="small">
+    Check the weather in your village, town or district
+    before planning agricultural activities.
+  </p>
+
+  <div class="card">
+
+    <label>Enter your village, town or district</label>
+
+    <input id="weatherLocation"
+      placeholder="Example: Mysuru, Karnataka">
+
+    <br><br>
+
+    <button onclick="getWeather()">
+      Check weather
+    </button>
+
+    <button onclick="getWeatherLocation()">
+      📍 Use my location
+    </button>
+
+    <div id="weatherResult" class="result" hidden>
+      Weather information will appear here.
+    </div>
+
+  </div>
+
+  <div class="card">
+    <h3>🌾 Farming weather advice</h3>
+    <p class="small">
+      Check rainfall forecasts before irrigation, harvesting,
+      spraying or drying crops. Always consider your crop,
+      local conditions and advice from agricultural experts.
+    </p>
+  </div>
+
+</section>
+
+<!-- VOICE ASSISTANT PAGE -->
+<section id="voice" class="page">
+  <h1 class="section-title">🎙️ AgriEquip Voice Assistant</h1>
+
+  <div class="card">
+    <h3>Speak in your preferred language</h3>
+    <p class="small">
+      Select your language in Farmer Account before using the voice assistant.
+    </p>
+
+    <label>Speak your instructions</label>
+    <button onclick="startListening()">🎤 Start speaking</button>
+    <p id="voiceStatus" class="small">Press the button and speak.</p>
+
+    <label>Your speech converted into text</label>
+    <textarea id="voiceText" rows="4"
+      placeholder="Your spoken words will appear here..."></textarea>
+
+    <br><br>
+    <button onclick="speakText()">🔊 Read text aloud</button>
+    <button onclick="stopSpeaking()">Stop audio</button>
+  </div>
+</section>
+
   </nav>
 </header>
 
@@ -437,6 +509,309 @@ function recordPayment() {
 }
 
 renderEquipment();
+  
+// AGRIEQUIP VOICE ASSISTANT
+
+function getSelectedVoiceLanguage() {
+  const selected = document.getElementById("language").value;
+
+  const languages = {
+    "English": "en-IN",
+    "हिन्दी - Hindi": "hi-IN",
+    "ಕನ್ನಡ - Kannada": "kn-IN",
+    "தமிழ் - Tamil": "ta-IN",
+    "తెలుగు - Telugu": "te-IN",
+    "മലയാളം - Malayalam": "ml-IN",
+    "मराठी - Marathi": "mr-IN",
+    "বাংলা - Bengali": "bn-IN",
+    "ગુજરાતી - Gujarati": "gu-IN",
+    "ਪੰਜਾਬੀ - Punjabi": "pa-IN",
+    "اردو - Urdu": "ur-PK",
+    "French": "fr-FR",
+    "Spanish": "es-ES",
+    "German": "de-DE",
+    "Arabic": "ar-SA",
+    "Chinese": "zh-CN",
+    "Japanese": "ja-JP",
+    "Korean": "ko-KR"
+  };
+
+  return languages[selected] || "en-IN";
+}
+
+// SPEECH TO TEXT
+function startListening() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Speech recognition is not supported in this browser. Try a recent version of Chrome.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = getSelectedVoiceLanguage();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  document.getElementById("voiceStatus").textContent =
+    "Listening... Please speak.";
+
+  recognition.onresult = function(event) {
+    const transcript =
+      event.results[0][0].transcript;
+
+    document.getElementById("voiceText").value =
+      transcript;
+
+    document.getElementById("voiceStatus").textContent =
+      "Your speech has been converted into text.";
+  };
+
+  recognition.onerror = function(event) {
+    document.getElementById("voiceStatus").textContent =
+      "Voice recognition error: " + event.error;
+  };
+
+  recognition.onend = function() {
+    if (document.getElementById("voiceStatus").textContent ===
+        "Listening... Please speak.") {
+      document.getElementById("voiceStatus").textContent =
+        "Listening ended.";
+    }
+  };
+
+  recognition.start();
+}
+
+// TEXT TO SPEECH
+function speakText() {
+  const text =
+    document.getElementById("voiceText").value.trim();
+
+  if (!text) {
+    alert("Please enter or speak some text first.");
+    return;
+  }
+
+  if (!("speechSynthesis" in window)) {
+    alert("Text-to-speech is not supported in this browser.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const speech = new SpeechSynthesisUtterance(text);
+
+  speech.lang = getSelectedVoiceLanguage();
+  speech.rate = 0.9;
+  speech.pitch = 1;
+
+  window.speechSynthesis.speak(speech);
+}
+
+function stopSpeaking() {
+  window.speechSynthesis.cancel();
+}
+  
+// AGRIEQUIP WEATHER SYSTEM
+
+async function getWeather() {
+
+  const location =
+    document.getElementById("weatherLocation")
+      .value.trim();
+
+  const result =
+    document.getElementById("weatherResult");
+
+  if (!location) {
+    alert("Please enter your village or town.");
+    return;
+  }
+
+  result.hidden = false;
+  result.textContent = "Finding your location and weather...";
+
+  try {
+
+    // FIND LOCATION COORDINATES
+    const geoResponse = await fetch(
+      "https://geocoding-api.open-meteo.com/v1/search?name=" +
+      encodeURIComponent(location) +
+      "&count=1&language=en&format=json"
+    );
+
+    if (!geoResponse.ok) {
+      throw new Error("Location search failed.");
+    }
+
+    const geoData = await geoResponse.json();
+
+    if (!geoData.results || geoData.results.length === 0) {
+      result.textContent = "Location not found. Please try another name.";
+      return;
+    }
+
+    const place = geoData.results[0];
+
+    await displayWeather(
+      place.latitude,
+      place.longitude,
+      place.name
+    );
+
+  } catch (error) {
+
+    result.textContent =
+      "Unable to load weather. Please check your internet connection and try again.";
+
+    console.error(error);
+  }
+}
+
+
+// GET WEATHER USING FARMER'S GPS
+function getWeatherLocation() {
+
+  if (!navigator.geolocation) {
+    alert("Location services are not supported.");
+    return;
+  }
+
+  const result =
+    document.getElementById("weatherResult");
+
+  result.hidden = false;
+  result.textContent = "Requesting location permission...";
+
+  navigator.geolocation.getCurrentPosition(
+    async function(position) {
+
+      await displayWeather(
+        position.coords.latitude,
+        position.coords.longitude,
+        "Your current location"
+      );
+
+    },
+
+    function() {
+      result.textContent =
+        "Location permission was not granted. Enter your town manually instead.";
+    }
+  );
+}
+
+
+// FETCH CURRENT WEATHER AND 5-DAY FORECAST
+async function displayWeather(latitude, longitude, placeName) {
+
+  const result =
+    document.getElementById("weatherResult");
+
+  result.hidden = false;
+  result.textContent = "Loading weather forecast...";
+
+  try {
+
+    const url =
+      "https://api.open-meteo.com/v1/forecast" +
+      "?latitude=" + latitude +
+      "&longitude=" + longitude +
+      "&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m" +
+      "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum" +
+      "&forecast_days=5" +
+      "&timezone=auto";
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Weather service unavailable.");
+    }
+
+    const data = await response.json();
+
+    const current = data.current;
+    const daily = data.daily;
+
+    const weatherNames = {
+      0: "Clear sky",
+      1: "Mainly clear",
+      2: "Partly cloudy",
+      3: "Overcast",
+      45: "Fog",
+      48: "Depositing rime fog",
+      51: "Light drizzle",
+      53: "Moderate drizzle",
+      55: "Heavy drizzle",
+      61: "Light rain",
+      63: "Moderate rain",
+      65: "Heavy rain",
+      71: "Light snowfall",
+      73: "Moderate snowfall",
+      75: "Heavy snowfall",
+      80: "Rain showers",
+      81: "Moderate rain showers",
+      82: "Heavy rain showers",
+      95: "Thunderstorm"
+    };
+
+    let forecastHTML = "";
+
+    for (let i = 0; i < daily.time.length; i++) {
+
+      forecastHTML += `
+        <div class="card">
+          <strong>${daily.time[i]}</strong>
+          <p>Maximum: ${daily.temperature_2m_max[i]}°C</p>
+          <p>Minimum: ${daily.temperature_2m_min[i]}°C</p>
+          <p>Rain chance: ${daily.precipitation_probability_max[i] ?? "N/A"}%</p>
+          <p>Rainfall: ${daily.precipitation_sum[i]} mm</p>
+        </div>
+      `;
+    }
+
+    result.innerHTML = `
+      <h2>🌤️ ${placeName}</h2>
+
+      <h1>${current.temperature_2m}°C</h1>
+
+      <h3>
+        ${weatherNames[current.weather_code] ||
+          "Weather conditions"}
+      </h3>
+
+      <p>Humidity: ${current.relative_humidity_2m}%</p>
+
+      <p>Rainfall: ${current.precipitation} mm</p>
+
+      <p>Wind speed: ${current.wind_speed_10m} km/h</p>
+
+      <h3>Five-day forecast</h3>
+
+      <div class="grid">
+        ${forecastHTML}
+      </div>
+
+      <p class="small">
+        Forecast information is provided by Open-Meteo.
+        Forecasts can change; check local conditions before
+        making important farming decisions.
+      </p>
+    `;
+
+  } catch (error) {
+
+    result.textContent =
+      "Could not retrieve the forecast. Please try again later.";
+
+    console.error(error);
+  }
+}
+
 </script>
 </body>
 </html>
