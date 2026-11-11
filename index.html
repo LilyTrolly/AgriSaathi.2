@@ -6,6 +6,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AgriEquip | Smart Farming Access</title>
 <style>
+  .gtranslate_wrapper {
+    display: inline-block;
+    margin: 8px;
+    z-index: 9999;
+}
+
+.gtranslate_wrapper select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #2e7d32;
+    background: white;
+    color: #1b5e20;
+    font-size: 14px;
+    cursor: pointer;
+}
 :root {
   --forest:#123d2b; --green:#26734d; --leaf:#65a86e;
   --lime:#d9efbd; --cream:#f5f8ef; --white:#fff;
@@ -94,6 +109,10 @@ video { width:100%; border-radius:12px; background:#173c2b; }
 <header>
   <div class="logo">🌱 Agri<span>Equip</span></div>
   <nav>
+    
+<!-- AgriEquip language selector -->
+<div class="gtranslate_wrapper"></div>
+
     <button onclick="showPage('weather',this)">🌤️ Weather</button>
     <button onclick="showPage('voice',this)">🎙️ Voice Assistant</button>
     <button class="active" onclick="showPage('home',this)">Home</button>
@@ -813,5 +832,45 @@ async function displayWeather(latitude, longitude, placeName) {
 }
 
 </script>
+  
+<!-- AgriEquip multilingual translation -->
+<script>
+window.gtranslateSettings = {
+    "default_language": "en",
+    "languages": [
+        "en",
+        "hi", "kn", "ta", "te", "ml",
+        "mr", "bn", "gu", "pa", "ur",
+        "ne", "si", "sd",
+        "ar", "zh-CN", "zh-TW",
+        "ja", "ko", "th", "vi",
+        "fr", "de", "es", "it", "pt",
+        "ru", "nl", "pl", "tr", "uk",
+        "id", "ms", "fil", "sw", "af",
+        "am", "fa", "he", "el", "ro",
+        "hu", "sv", "da", "fi", "no",
+        "cs", "sk", "bg", "hr", "sr",
+        "sl", "et", "lv", "lt", "ga",
+        "cy", "zu", "xh", "yo", "ig",
+        "ha", "my", "km", "lo", "mn",
+        "kk", "uz", "az", "hy", "ka",
+        "sq", "eu", "ca", "gl", "is",
+        "mt", "lb", "yi", "la", "eo",
+        "jv", "ceb", "haw", "mi", "sm",
+        "ny", "st", "sn", "so", "ps",
+        "ku", "ky", "tg", "fy", "gd"
+    ],
+    "wrapper_selector": ".gtranslate_wrapper",
+    "switcher_horizontal_position": "right",
+    "switcher_vertical_position": "top",
+    "float_switcher_open_direction": "bottom"
+};
+</script>
+
+<script
+    src="https://cdn.gtranslate.net/widgets/latest/dropdown.js"
+    defer>
+</script>
+
 </body>
 </html>
