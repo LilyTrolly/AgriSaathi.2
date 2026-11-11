@@ -166,29 +166,44 @@ video { width:100%; border-radius:12px; background:#173c2b; }
 
 </section>
 
-<!-- VOICE ASSISTANT PAGE -->
+
 <section id="voice" class="page">
   <h1 class="section-title">🎙️ AgriEquip Voice Assistant</h1>
 
   <div class="card">
-    <h3>Speak in your preferred language</h3>
+    <h3>Talk to AgriEquip</h3>
+
     <p class="small">
-      Select your language in Farmer Account before using the voice assistant.
+      Speak in the language selected in your Farmer Account.
+      The assistant will help you find the correct section.
     </p>
 
-    <label>Speak your instructions</label>
-    <button onclick="startListening()">🎤 Start speaking</button>
-    <p id="voiceStatus" class="small">Press the button and speak.</p>
+    <button onclick="startListening()">
+      🎤 Start speaking
+    </button>
 
-    <label>Your speech converted into text</label>
-    <textarea id="voiceText" rows="4"
-      placeholder="Your spoken words will appear here..."></textarea>
+    <p id="voiceStatus" class="small">
+      Press Start speaking to begin.
+    </p>
 
-    <br><br>
-    <button onclick="speakText()">🔊 Read text aloud</button>
-    <button onclick="stopSpeaking()">Stop audio</button>
+    <label>Your spoken message</label>
+    <textarea id="voiceText" rows="3"
+      placeholder="Your speech will appear here..."></textarea>
+
+    <button onclick="handleTypedVoiceCommand()">
+      Ask AgriEquip
+    </button>
+
+    <div id="voiceReply" class="result" hidden></div>
+
+    <div id="voiceAction" class="result" hidden></div>
+
+    <button onclick="stopSpeaking()">
+      🔇 Stop voice
+    </button>
   </div>
 </section>
+
 
   </nav>
 </header>
@@ -529,43 +544,335 @@ function recordPayment() {
 
 renderEquipment();
   
-// AGRIEQUIP VOICE ASSISTANT
+
+// ======================================
+// AGRIEQUIP MULTILINGUAL VOICE ASSISTANT
+// ======================================
+
+// Language selected in Farmer Account
+const voiceLocales = {
+  "English": "en-IN",
+  "हिन्दी - Hindi": "hi-IN",
+  "ಕನ್ನಡ - Kannada": "kn-IN",
+  "தமிழ் - Tamil": "ta-IN",
+  "తెలుగు - Telugu": "te-IN",
+  "മലയാളം - Malayalam": "ml-IN",
+  "मराठी - Marathi": "mr-IN",
+  "বাংলা - Bengali": "bn-IN",
+  "ગુજરાતી - Gujarati": "gu-IN",
+  "ਪੰਜਾਬੀ - Punjabi": "pa-IN",
+  "اردو - Urdu": "ur-PK",
+  "ଓଡ଼ିଆ - Odia": "or-IN",
+  "অসমীয়া - Assamese": "as-IN",
+  "संस्कृतम् - Sanskrit": "sa-IN",
+  "Nepali": "ne-NP",
+  "Chinese": "zh-CN",
+  "Japanese": "ja-JP",
+  "Korean": "ko-KR",
+  "Arabic": "ar-SA",
+  "French": "fr-FR",
+  "Spanish": "es-ES",
+  "Portuguese": "pt-PT",
+  "German": "de-DE",
+  "Russian": "ru-RU",
+  "Swahili": "sw-KE",
+  "Indonesian": "id-ID",
+  "Turkish": "tr-TR",
+  "Italian": "it-IT",
+  "Dutch": "nl-NL",
+  "Thai": "th-TH",
+  "Vietnamese": "vi-VN",
+  "Persian": "fa-IR",
+  "Hebrew": "he-IL",
+  "Ukrainian": "uk-UA",
+  "Polish": "pl-PL",
+  "Greek": "el-GR"
+};
 
 function getSelectedVoiceLanguage() {
-  const selected = document.getElementById("language").value;
-
-  const languages = {
-    "English": "en-IN",
-    "हिन्दी - Hindi": "hi-IN",
-    "ಕನ್ನಡ - Kannada": "kn-IN",
-    "தமிழ் - Tamil": "ta-IN",
-    "తెలుగు - Telugu": "te-IN",
-    "മലയാളം - Malayalam": "ml-IN",
-    "मराठी - Marathi": "mr-IN",
-    "বাংলা - Bengali": "bn-IN",
-    "ગુજરાતી - Gujarati": "gu-IN",
-    "ਪੰਜਾਬੀ - Punjabi": "pa-IN",
-    "اردو - Urdu": "ur-PK",
-    "French": "fr-FR",
-    "Spanish": "es-ES",
-    "German": "de-DE",
-    "Arabic": "ar-SA",
-    "Chinese": "zh-CN",
-    "Japanese": "ja-JP",
-    "Korean": "ko-KR"
-  };
-
-  return languages[selected] || "en-IN";
+  const selector = document.getElementById("language");
+  return voiceLocales[selector.value] || "en-IN";
 }
 
-// SPEECH TO TEXT
+function getVoiceLanguageName() {
+  return document.getElementById("language").value;
+}
+
+// Replies for the main supported demonstration languages
+const voiceReplies = {
+  "English": {
+    listening: "I am listening. Please speak.",
+    understood: "I understood your request.",
+    notUnderstood: "Sorry, I did not understand. Please try saying it another way.",
+    home: "I can take you to the home page.",
+    equipment: "You can find and request agricultural equipment here.",
+    soil: "You can enter your soil information and see general soil suggestions here.",
+    weather: "You can check your local weather and five-day forecast here.",
+    account: "You can update your farmer details and preferred language here.",
+    help: "I can help you find equipment, explore soil information, check weather, or open your farmer account."
+  },
+
+  "हिन्दी - Hindi": {
+    listening: "मैं सुन रहा हूँ। कृपया बोलिए।",
+    understood: "मैंने आपकी बात समझ ली।",
+    notUnderstood: "माफ़ कीजिए, मैं समझ नहीं पाया। कृपया दोबारा बोलें।",
+    home: "मैं आपको मुख्य पृष्ठ पर ले जा सकता हूँ।",
+    equipment: "यहाँ आप कृषि उपकरण खोज सकते हैं और बुकिंग का अनुरोध कर सकते हैं।",
+    soil: "यहाँ आप मिट्टी की जानकारी दर्ज करके सामान्य सुझाव प्राप्त कर सकते हैं।",
+    weather: "यहाँ आप अपने क्षेत्र का मौसम और पाँच दिन का पूर्वानुमान देख सकते हैं।",
+    account: "यहाँ आप अपने किसान खाते और पसंदीदा भाषा को बदल सकते हैं।",
+    help: "मैं उपकरण खोजने, मिट्टी की जानकारी देखने, मौसम जाँचने और किसान खाता खोलने में मदद कर सकता हूँ।"
+  },
+
+  "ಕನ್ನಡ - Kannada": {
+    listening: "ನಾನು ಕೇಳುತ್ತಿದ್ದೇನೆ. ದಯವಿಟ್ಟು ಮಾತನಾಡಿ.",
+    understood: "ನಿಮ್ಮ ವಿನಂತಿಯನ್ನು ನಾನು ಅರ್ಥಮಾಡಿಕೊಂಡಿದ್ದೇನೆ.",
+    notUnderstood: "ಕ್ಷಮಿಸಿ, ನನಗೆ ಅರ್ಥವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಹೇಳಿ.",
+    home: "ನಾನು ನಿಮ್ಮನ್ನು ಮುಖ್ಯ ಪುಟಕ್ಕೆ ಕರೆದೊಯ್ಯಬಹುದು.",
+    equipment: "ಇಲ್ಲಿ ನೀವು ಕೃಷಿ ಉಪಕರಣಗಳನ್ನು ಹುಡುಕಿ ಬುಕಿಂಗ್ ವಿನಂತಿಸಬಹುದು.",
+    soil: "ಇಲ್ಲಿ ನಿಮ್ಮ ಮಣ್ಣಿನ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸಿ ಸಾಮಾನ್ಯ ಸಲಹೆಗಳನ್ನು ಪಡೆಯಬಹುದು.",
+    weather: "ಇಲ್ಲಿ ನಿಮ್ಮ ಸ್ಥಳದ ಹವಾಮಾನ ಮತ್ತು ಐದು ದಿನಗಳ ಮುನ್ಸೂಚನೆಯನ್ನು ನೋಡಬಹುದು.",
+    account: "ಇಲ್ಲಿ ನಿಮ್ಮ ರೈತರ ಖಾತೆ ಮತ್ತು ಭಾಷೆಯ ಆಯ್ಕೆಯನ್ನು ಬದಲಾಯಿಸಬಹುದು.",
+    help: "ಉಪಕರಣಗಳನ್ನು ಹುಡುಕಲು, ಮಣ್ಣಿನ ಮಾಹಿತಿ ಪಡೆಯಲು, ಹವಾಮಾನ ನೋಡಲು ಅಥವಾ ರೈತರ ಖಾತೆ ತೆರೆಯಲು ನಾನು ಸಹಾಯ ಮಾಡಬಹುದು."
+  },
+
+  "தமிழ் - Tamil": {
+    listening: "நான் கேட்கிறேன். தயவுசெய்து பேசுங்கள்.",
+    understood: "உங்கள் கோரிக்கையைப் புரிந்துகொண்டேன்.",
+    notUnderstood: "மன்னிக்கவும், புரியவில்லை. மீண்டும் சொல்லுங்கள்.",
+    home: "உங்களை முகப்புப் பக்கத்திற்கு அழைத்துச் செல்ல முடியும்.",
+    equipment: "இங்கே விவசாய உபகரணங்களைக் கண்டறிந்து முன்பதிவு கோரலாம்.",
+    soil: "இங்கே மண் தகவல்களை உள்ளிட்டு பொதுவான பரிந்துரைகளைப் பெறலாம்.",
+    weather: "இங்கே உங்கள் பகுதியின் வானிலையையும் ஐந்து நாள் முன்னறிவிப்பையும் பார்க்கலாம்.",
+    account: "இங்கே உங்கள் விவசாயி கணக்கு மற்றும் மொழியை மாற்றலாம்.",
+    help: "உபகரணங்கள், மண் தகவல், வானிலை மற்றும் விவசாயி கணக்கைப் பயன்படுத்த உதவ முடியும்."
+  },
+
+  "తెలుగు - Telugu": {
+    listening: "నేను వింటున్నాను. దయచేసి మాట్లాడండి.",
+    understood: "మీ అభ్యర్థన నాకు అర్థమైంది.",
+    notUnderstood: "క్షమించండి, నాకు అర్థం కాలేదు. మళ్లీ చెప్పండి.",
+    home: "మిమ్మల్ని హోమ్ పేజీకి తీసుకెళ్లగలను.",
+    equipment: "ఇక్కడ మీరు వ్యవసాయ పరికరాలను వెతికి బుకింగ్ అభ్యర్థించవచ్చు.",
+    soil: "ఇక్కడ మీ నేల వివరాలను నమోదు చేసి సాధారణ సూచనలు పొందవచ్చు.",
+    weather: "ఇక్కడ మీ ప్రాంత వాతావరణం మరియు ఐదు రోజుల సూచనను చూడవచ్చు.",
+    account: "ఇక్కడ మీ రైతు ఖాతా మరియు భాషను మార్చవచ్చు.",
+    help: "పరికరాలు వెతకడం, నేల సమాచారం, వాతావరణం మరియు రైతు ఖాతా తెరవడంలో సహాయం చేయగలను."
+  },
+
+  "മലയാളം - Malayalam": {
+    listening: "ഞാൻ കേൾക്കുകയാണ്. ദയവായി സംസാരിക്കൂ.",
+    understood: "നിങ്ങളുടെ അഭ്യർത്ഥന എനിക്ക് മനസ്സിലായി.",
+    notUnderstood: "ക്ഷമിക്കണം, എനിക്ക് മനസ്സിലായില്ല. വീണ്ടും പറയൂ.",
+    home: "നിങ്ങളെ ഹോം പേജിലേക്ക് കൊണ്ടുപോകാം.",
+    equipment: "ഇവിടെ കാർഷിക ഉപകരണങ്ങൾ തിരയാനും ബുക്കിങ് അഭ്യർത്ഥിക്കാനും കഴിയും.",
+    soil: "ഇവിടെ മണ്ണിന്റെ വിവരങ്ങൾ നൽകി പൊതുവായ നിർദ്ദേശങ്ങൾ ലഭിക്കും.",
+    weather: "ഇവിടെ നിങ്ങളുടെ പ്രദേശത്തെ കാലാവസ്ഥയും അഞ്ച് ദിവസത്തെ പ്രവചനവും കാണാം.",
+    account: "ഇവിടെ കർഷക അക്കൗണ്ടും ഭാഷയും മാറ്റാം.",
+    help: "ഉപകരണങ്ങൾ, മണ്ണ്, കാലാവസ്ഥ, കർഷക അക്കൗണ്ട് എന്നിവയിൽ സഹായിക്കാം."
+  }
+};
+
+// Find a suitable spoken response
+function getReply(key) {
+  const language = getVoiceLanguageName();
+
+  // Languages without a completed reply dictionary
+  // currently use the English demonstration replies.
+  return (voiceReplies[language] || voiceReplies["English"])[key];
+}
+
+// Speak the response using the selected language
+function speakAssistant(text) {
+  if (!("speechSynthesis" in window)) return;
+
+  window.speechSynthesis.cancel();
+
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = getSelectedVoiceLanguage();
+  speech.rate = 0.9;
+  speech.pitch = 1;
+
+  const voices = window.speechSynthesis.getVoices();
+  const matchingVoice = voices.find(v =>
+    v.lang.toLowerCase() === speech.lang.toLowerCase()
+  );
+
+  if (matchingVoice) speech.voice = matchingVoice;
+
+  window.speechSynthesis.speak(speech);
+}
+
+// Show the answer on the screen and speak it
+function assistantReply(key) {
+  const reply = getReply(key);
+
+  const output = document.getElementById("voiceReply");
+  output.hidden = false;
+  output.textContent = reply;
+
+  speakAssistant(reply);
+}
+
+// Navigation destinations and their icons
+const voiceDestinations = {
+  home: {
+    icon: "🏠",
+    title: "Home",
+    phrases: [
+      "home", "main page", "homepage",
+      "मुख्य पृष्ठ", "ಮನೆ", "ಮುಖ್ಯ ಪುಟ",
+      "முகப்பு", "హోమ్"
+    ]
+  },
+
+  equipment: {
+    icon: "🚜",
+    title: "Equipment Marketplace",
+    phrases: [
+      "equipment", "tractor", "rent", "machinery",
+      "कृषि उपकरण", "ट्रैक्टर",
+      "ಉಪಕರಣ", "ಟ್ರ್ಯಾಕ್ಟರ್", "ಬಾಡಿಗೆ",
+      "கருவிகள்", "டிராக்டர்",
+      "పరికరాలు", "ట్రాక్టర్"
+    ]
+  },
+
+  soil: {
+    icon: "🌱",
+    title: "Soil Lab",
+    phrases: [
+      "soil", "soil test", "fertility", "fertilizer",
+      "मिट्टी", "खाद",
+      "ಮಣ್ಣು", "ಗೊಬ್ಬರ",
+      "மண்", "உரம்",
+      "నేల", "ఎరువు"
+    ]
+  },
+
+  weather: {
+    icon: "🌤️",
+    title: "Weather",
+    phrases: [
+      "weather", "rain", "forecast",
+      "मौसम", "बारिश",
+      "ಹವಾಮಾನ", "ಮಳೆ",
+      "வானிலை", "மழை",
+      "వాతావరణం", "వర్షం"
+    ]
+  },
+
+  explorer: {
+    icon: "🗺️",
+    title: "India Soil Guide",
+    phrases: [
+      "india soil guide", "soil guide", "soil types",
+      "भारत की मिट्टी", "ಮಣ್ಣಿನ ಮಾರ್ಗದರ್ಶಿ",
+      "மண் வழிகாட்டி", "నేల మార్గదర్శి"
+    ]
+  },
+
+  account: {
+    icon: "👨‍🌾",
+    title: "Farmer Account",
+    phrases: [
+      "account", "farmer account", "my profile",
+      "खाता", "किसान खाता",
+      "ಖಾತೆ", "ರೈತರ ಖಾತೆ",
+      "கணக்கு", "விவசாயி கணக்கு",
+      "ఖాతా", "రైతు ఖాతా"
+    ]
+  }
+};
+
+// Display a clickable destination
+function showVoiceDestination(page) {
+  const destination = voiceDestinations[page];
+  const box = document.getElementById("voiceAction");
+
+  box.hidden = false;
+
+  box.innerHTML = `
+    <h3>${destination.icon} ${destination.title}</h3>
+    <p>Click below to open this section.</p>
+    <button onclick="openVoiceDestination('${page}')">
+      ${destination.icon} Open ${destination.title}
+    </button>
+  `;
+}
+
+// Open the requested website section
+function openVoiceDestination(page) {
+  const navButton = Array.from(
+    document.querySelectorAll("nav button")
+  ).find(button =>
+    button.getAttribute("onclick")?.includes("'" + page + "'")
+  );
+
+  showPage(page, navButton);
+}
+
+// Understand the farmer's request
+function handleVoiceRequest(message) {
+  const text = message.toLowerCase().trim();
+
+  const actionBox = document.getElementById("voiceAction");
+  actionBox.hidden = true;
+
+  let destination = null;
+
+  for (const [page, details] of Object.entries(voiceDestinations)) {
+    if (details.phrases.some(phrase =>
+      text.includes(phrase.toLowerCase())
+    )) {
+      destination = page;
+      break;
+    }
+  }
+
+  if (destination) {
+    assistantReply(destination);
+    showVoiceDestination(destination);
+    return;
+  }
+
+  // General help
+  if (
+    text.includes("help") ||
+    text.includes("what can you do") ||
+    text.includes("ಸಹಾಯ") ||
+    text.includes("मदद") ||
+    text.includes("உதவி") ||
+    text.includes("సహాయం")
+  ) {
+    assistantReply("help");
+    return;
+  }
+
+  assistantReply("notUnderstood");
+}
+
+// Handle typed questions too
+function handleTypedVoiceCommand() {
+  const message = document.getElementById("voiceText").value.trim();
+
+  if (!message) {
+    assistantReply("notUnderstood");
+    return;
+  }
+
+  handleVoiceRequest(message);
+}
+
+// Speech recognition
 function startListening() {
   const SpeechRecognition =
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
-    alert("Speech recognition is not supported in this browser. Try a recent version of Chrome.");
+    document.getElementById("voiceStatus").textContent =
+      "Speech recognition is not supported in this browser. Try a recent version of Chrome.";
     return;
   }
 
@@ -576,17 +883,17 @@ function startListening() {
   recognition.interimResults = false;
 
   document.getElementById("voiceStatus").textContent =
-    "Listening... Please speak.";
+    getReply("listening");
 
   recognition.onresult = function(event) {
-    const transcript =
-      event.results[0][0].transcript;
+    const transcript = event.results[0][0].transcript;
 
-    document.getElementById("voiceText").value =
-      transcript;
+    document.getElementById("voiceText").value = transcript;
 
     document.getElementById("voiceStatus").textContent =
-      "Your speech has been converted into text.";
+      getReply("understood");
+
+    handleVoiceRequest(transcript);
   };
 
   recognition.onerror = function(event) {
@@ -595,45 +902,19 @@ function startListening() {
   };
 
   recognition.onend = function() {
-    if (document.getElementById("voiceStatus").textContent ===
-        "Listening... Please speak.") {
-      document.getElementById("voiceStatus").textContent =
-        "Listening ended.";
-    }
+    // Listening has ended.
   };
 
   recognition.start();
 }
 
-// TEXT TO SPEECH
-function speakText() {
-  const text =
-    document.getElementById("voiceText").value.trim();
-
-  if (!text) {
-    alert("Please enter or speak some text first.");
-    return;
-  }
-
-  if (!("speechSynthesis" in window)) {
-    alert("Text-to-speech is not supported in this browser.");
-    return;
-  }
-
-  window.speechSynthesis.cancel();
-
-  const speech = new SpeechSynthesisUtterance(text);
-
-  speech.lang = getSelectedVoiceLanguage();
-  speech.rate = 0.9;
-  speech.pitch = 1;
-
-  window.speechSynthesis.speak(speech);
-}
-
+// Stop spoken response
 function stopSpeaking() {
-  window.speechSynthesis.cancel();
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
 }
+
   
 // AGRIEQUIP WEATHER SYSTEM
 
